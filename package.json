@@ -62,8 +62,8 @@
     "vite": "^6.1.0"
   },
   "description": "",
-  "main": "index.js",
+  "main": "electron/main.cjs",
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Tushar Amdoskar",
+  "license": "MIT"
 }
