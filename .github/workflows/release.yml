@@ -1,0 +1,56 @@
+﻿name: Build and Release Windows App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Web Frontend
+        run: npm run build
+
+      - name: Install Electron Builder
+        run: npm install -D electron-builder
+
+      - name: Package Windows Executables
+        run: npx electron-builder --win --x64
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          name: Background Remover Studio v1.0.0
+          tag_name: v1.0.0
+          files: release/*.exe
+          draft: false
+          prerelease: false
+          body: |
+            ## Background Remover Studio (Windows Standalone)
+            
+            - **Ultra AI Mode**: Sub-pixel edge precision for hair, fur, and complex portraits powered by native BiRefNet.
+            - **Fast AI Mode**: High-speed offline segmentation.
+            - **Zero Data Uploads**: 100% private, runs entirely on your local machine.
+            
+            ### Downloads
+            Download the installer or portable `.exe` below:

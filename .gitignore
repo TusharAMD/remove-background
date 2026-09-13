@@ -1,0 +1,12 @@
+﻿node_modules
+dist
+dist-ssr
+release
+*.local
+.cache
+.DS_Store
+*.onnx
+*.exe
+*.log
+__pycache__
+*.pyc
