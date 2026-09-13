@@ -86,9 +86,17 @@ export async function renderImageWithBackground(
     }
   } else if (config.type === 'blur') {
     const origImg = await loadImage(originalUrl);
+    // Scale blur to match full canvas resolution (reference baseline ~800px preview)
+    const scaleFactor = Math.max(width, height) / 800;
+    const blurRadius = Math.max(3, Math.round(config.blurAmount * scaleFactor));
+
     ctx.save();
-    ctx.filter = `blur(${config.blurAmount}px)`;
+    // 1. Draw solid original base
     ctx.drawImage(origImg, 0, 0, width, height);
+    // 2. Draw blurred bokeh layer with subtle expansion to prevent edge vignetting
+    ctx.filter = `blur(${blurRadius}px)`;
+    const pad = Math.round(blurRadius * 1.2);
+    ctx.drawImage(origImg, -pad, -pad, width + pad * 2, height + pad * 2);
     ctx.restore();
   }
 

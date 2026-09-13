@@ -440,7 +440,15 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           className="w-full sm:flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-brand-600 via-cyan-500 to-emerald-400 hover:from-brand-500 hover:via-cyan-400 hover:to-emerald-300 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <Download className="w-4 h-4" />
-          <span>{isExporting ? 'Exporting...' : 'Download Clean PNG'}</span>
+          <span>
+            {isExporting
+              ? 'Exporting...'
+              : config.type === 'transparent'
+              ? 'Download Transparent PNG'
+              : config.type === 'blur'
+              ? 'Download Portrait Blur Image'
+              : 'Download Image'}
+          </span>
         </button>
 
         <button
