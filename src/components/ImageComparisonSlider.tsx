@@ -475,15 +475,20 @@ export const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({
           }`}
           style={getProcessedBgStyle()}
         >
-          {/* Blurred Background Mode */}
+          {/* Blurred Background Mode: 1:1 DSLR / Portrait Mode Bokeh */}
           {bgConfig.type === 'blur' && (
-            <div
-              className="absolute inset-0 bg-cover bg-center filter scale-105"
-              style={{
-                backgroundImage: `url(${originalUrl})`,
-                filter: `blur(${bgConfig.blurAmount}px)`
-              }}
-            />
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+              <img
+                src={originalUrl}
+                alt="Blurred Backdrop"
+                className="max-w-full max-h-full object-contain"
+                style={{
+                  transform: `scale(${zoom * 1.01})`,
+                  filter: `blur(${bgConfig.blurAmount}px)`
+                }}
+                draggable={false}
+              />
+            </div>
           )}
 
           {/* If Touch-Up is active: Interactive Canvas for Erasing / Restoring */}

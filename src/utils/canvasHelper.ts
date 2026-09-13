@@ -88,8 +88,7 @@ export async function renderImageWithBackground(
     const origImg = await loadImage(originalUrl);
     ctx.save();
     ctx.filter = `blur(${config.blurAmount}px)`;
-    const pad = config.blurAmount * 2;
-    ctx.drawImage(origImg, -pad, -pad, width + pad * 2, height + pad * 2);
+    ctx.drawImage(origImg, 0, 0, width, height);
     ctx.restore();
   }
 
