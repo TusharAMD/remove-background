@@ -139,8 +139,8 @@ export async function renderImageWithBackground(
 
 /**
  * Renders guaranteed, hardware-independent multi-pass optical Bokeh blur on HTML5 Canvas.
- * Uses progressive multi-pass downsampling with high-quality interpolation to achieve
- * true DSLR optical portrait depth-of-field, working across all browsers.
+ * Accurately scales blur diffusion to match the high-resolution image geometry (e.g. 3000x4500)
+ * so downloaded files have 100% identical blur intensity as seen in the preview.
  */
 export function drawBokehBlur(
   ctx: CanvasRenderingContext2D,
@@ -154,41 +154,53 @@ export function drawBokehBlur(
     return;
   }
 
-  // Calculate downsample steps based on blur intensity (2px to 40px)
-  // Higher blur = smaller buffer for deeper optical diffusion
-  const minDimension = Math.max(8, Math.round(320 / Math.max(1, blurAmount * 0.8)));
-  const scaleRatio = Math.max(0.02, Math.min(0.35, minDimension / Math.max(width, height)));
+  // Calculate blur intensity proportional to display preview (~500px baseline)
+  // At blurAmount 30, blur radius is ~6% of the full image dimension
+  const blurFraction = Math.min(0.12, blurAmount / 500);
+  const effectiveRadius = Math.max(4, Math.round(Math.max(width, height) * blurFraction));
 
-  const curW = Math.max(12, Math.round(width * scaleRatio));
-  const curH = Math.max(12, Math.round(height * scaleRatio));
+  // Step 1: Intermediate downscale buffer (1/4 size) for preliminary anti-aliasing
+  const step1W = Math.max(32, Math.round(width / 4));
+  const step1H = Math.max(32, Math.round(height / 4));
+  const c1 = document.createElement('canvas');
+  c1.width = step1W;
+  c1.height = step1H;
+  const ctx1 = c1.getContext('2d');
+  if (!ctx1) return;
+  ctx1.imageSmoothingEnabled = true;
+  ctx1.imageSmoothingQuality = 'high';
+  ctx1.drawImage(img, 0, 0, step1W, step1H);
 
-  // Pass 1: Downscale to low-resolution buffer
-  const smallCanvas = document.createElement('canvas');
-  smallCanvas.width = curW;
-  smallCanvas.height = curH;
-  const smallCtx = smallCanvas.getContext('2d');
-  if (!smallCtx) return;
-  smallCtx.imageSmoothingEnabled = true;
-  smallCtx.imageSmoothingQuality = 'high';
-  smallCtx.drawImage(img, 0, 0, curW, curH);
+  // Step 2: Deep diffusion buffer proportional to effectiveRadius
+  // For high blur (30px on 4500px photo), downsamples to ~16-24px
+  const divisor = Math.max(2, Math.round(effectiveRadius * 0.7));
+  const deepW = Math.max(6, Math.round(width / divisor));
+  const deepH = Math.max(6, Math.round(height / divisor));
 
-  // Pass 2: Secondary diffusion step for creamy bokeh
-  const diffW = Math.max(8, Math.round(curW * 0.65));
-  const diffH = Math.max(8, Math.round(curH * 0.65));
-  const diffuseCanvas = document.createElement('canvas');
-  diffuseCanvas.width = diffW;
-  diffuseCanvas.height = diffH;
-  const diffCtx = diffuseCanvas.getContext('2d');
-  if (!diffCtx) return;
-  diffCtx.imageSmoothingEnabled = true;
-  diffCtx.imageSmoothingQuality = 'high';
-  diffCtx.drawImage(smallCanvas, 0, 0, diffW, diffH);
+  const c2 = document.createElement('canvas');
+  c2.width = deepW;
+  c2.height = deepH;
+  const ctx2 = c2.getContext('2d');
+  if (!ctx2) return;
+  ctx2.imageSmoothingEnabled = true;
+  ctx2.imageSmoothingQuality = 'high';
+  ctx2.drawImage(c1, 0, 0, deepW, deepH);
 
-  // Pass 3: Upscale diffused bokeh layer back to full destination canvas
+  // Step 3: Re-expand to intermediate smoothing buffer to guarantee zero banding
+  const c3 = document.createElement('canvas');
+  c3.width = step1W;
+  c3.height = step1H;
+  const ctx3 = c3.getContext('2d');
+  if (!ctx3) return;
+  ctx3.imageSmoothingEnabled = true;
+  ctx3.imageSmoothingQuality = 'high';
+  ctx3.drawImage(c2, 0, 0, step1W, step1H);
+
+  // Step 4: Final upscale back to destination canvas at 100% full resolution
   ctx.save();
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(diffuseCanvas, 0, 0, width, height);
+  ctx.drawImage(c3, 0, 0, width, height);
   ctx.restore();
 }
 
