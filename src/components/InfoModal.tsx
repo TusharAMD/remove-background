@@ -47,15 +47,25 @@ export const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose }) => {
               <span className="text-xs font-semibold text-white block">Standalone Windows Application</span>
               <span className="text-[11px] text-slate-400">100% Offline AI • Sub-pixel strand & fur precision</span>
             </div>
-            <a
-              href="https://github.com/TusharAMD/remove-background/releases/latest/download/Background-Remover-Setup.exe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download (.exe)</span>
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href="https://github.com/TusharAMD/remove-background/releases/download/v1.0.0/Background-Remover-Studio-Setup-1.0.0.exe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Installer (.exe)</span>
+              </a>
+              <a
+                href="https://github.com/TusharAMD/remove-background/releases/download/v1.0.0/Background-Remover-Studio-1.0.0.exe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-all flex items-center justify-center gap-1.5"
+              >
+                <span>Portable (.exe)</span>
+              </a>
+            </div>
           </div>
         </div>
 

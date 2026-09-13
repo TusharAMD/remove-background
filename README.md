@@ -1,10 +1,10 @@
-﻿# Background Remover ✂️
+# Background Remover ✂️
 
 > **100% Free & Unlimited AI Background Remover.**  
 > Runs entirely on-device (client-side in your browser & native Windows Desktop App). Zero server uploads, completely private.
 
 🔗 **Live Web App**: [https://tusharamd.github.io/remove-background/](https://tusharamd.github.io/remove-background/)  
-💾 **Windows App (.exe)**: [Download Latest Release](https://github.com/TusharAMD/remove-background/releases/latest/download/Background-Remover-Setup.exe)
+💾 **Windows App (.exe)**: [Download Setup Installer](https://github.com/TusharAMD/remove-background/releases/download/v1.0.0/Background-Remover-Studio-Setup-1.0.0.exe) \| [Download Portable .exe](https://github.com/TusharAMD/remove-background/releases/download/v1.0.0/Background-Remover-Studio-1.0.0.exe)
 
 ---
 
